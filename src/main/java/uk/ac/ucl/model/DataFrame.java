@@ -9,7 +9,7 @@ public class DataFrame {
     }
 
     public void addColumn(Column newColumn){
-        if (newColumn == null) {
+        if (newColumn == null){
             throw new IllegalArgumentException("Cannot add a null column");
         }
         this.columns.add(newColumn);
@@ -24,7 +24,7 @@ public class DataFrame {
     }
 
     public int getRowCount(){
-        if (this.columns.isEmpty()) {
+        if (this.columns.isEmpty()){
             return 0;
         }
         return this.columns.get(0).getSize();
@@ -40,7 +40,6 @@ public class DataFrame {
                 return col.getRowValue(row);
             }
         }
-
         throw new IllegalArgumentException("Column '" + columnName + "' not found");
     }
 
@@ -67,5 +66,4 @@ public class DataFrame {
         }
         throw new IllegalArgumentException("Column '" + columnName + "' not found");
     }
-
 }

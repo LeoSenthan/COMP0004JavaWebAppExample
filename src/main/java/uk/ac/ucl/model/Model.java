@@ -1,50 +1,50 @@
 package uk.ac.ucl.model;
 
-import java.io.Reader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 
-public class Model
-{
-  // The example code in this class should be replaced by your Model class code.
-  // The data should be stored in a suitable data structure.
+public class Model {
 
-  public List<String> getPatientNames()
-  {
-    return readFile("data/patients100.csv");
-  }
+    private static Model instance = new Model();
+    private DataFrame data;
 
-  // This method illustrates how to read csv data from a file.
-  // The data files are stored in the root directory of the project (the directory your project is in),
-  // in the directory named data.
-  public List<String> readFile(String fileName)
-  {
-    List<String> data = new ArrayList<>();
-
-    try (Reader reader = new FileReader(fileName);
-         CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT))
-    {
-      for (CSVRecord csvRecord : csvParser)
-      {
-        // The first row of the file contains the column headers, so is not actual data.
-        data.add(csvRecord.get(0));
-      }
-    } catch (IOException e)
-    {
-      e.printStackTrace();
+    // Private constructor ensures singleton pattern
+    private Model() {
+        // Load CSV from resources folder
+        DataLoader loader = new DataLoader("data/patients100.csv");
+        data = loader.load();
     }
-    return data;
-  }
 
-  // This also returns dummy data. The real version should use the keyword parameter to search
-  // the data and return a list of matching items.
-  public List<String> searchFor(String keyword)
-  {
-    return List.of("Search keyword is: "+ keyword, "result1", "result2", "result3");
-  }
+    public static Model getInstance() {
+        return instance;
+    }
+
+    public DataFrame getData() {
+        return data;
+    }
+
+    // Search across all columns, returns FIRST + LAST names for matches
+    public List<String> searchFor(String keyword) {
+        List<String> results = new ArrayList<>();
+
+        for (int row = 0; row < data.getRowCount(); row++) {
+            boolean match = false;
+
+            for (String column : data.getColumnNames()) {
+                String value = data.getValue(column, row);
+                if (value != null && value.toLowerCase().contains(keyword.toLowerCase())) {
+                    match = true;
+                    break;
+                }
+            }
+
+            if (match) {
+                String first = data.getValue("FIRST", row);
+                String last = data.getValue("LAST", row);
+                results.add(first + " " + last);
+            }
+        }
+
+        return results;
+    }
 }

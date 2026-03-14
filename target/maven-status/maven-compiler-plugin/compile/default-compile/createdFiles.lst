@@ -1,6 +1,7 @@
 uk\ac\ucl\model\ModelFactory.class
 uk\ac\ucl\model\DataFrame.class
 uk\ac\ucl\model\Model.class
+uk\ac\ucl\servlets\OperationsServlet.class
 uk\ac\ucl\model\DataLoader.class
 uk\ac\ucl\main\Main.class
 uk\ac\ucl\servlets\SearchServlet.class

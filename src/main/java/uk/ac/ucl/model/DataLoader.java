@@ -54,7 +54,19 @@ public class DataLoader {
     private void readLine(String line) {
         String[] vals = line.split(",", -1);
         for (int i = 0; i < vals.length; i++) {
-            database.addValue(database.getColumnNames().get(i), vals[i]);
+            String columnName = database.getColumnNames().get(i);
+            String cleanedValue = sanitizeValue(columnName, vals[i]);
+            database.addValue(columnName, cleanedValue);
         }
+    }
+
+    private String sanitizeValue(String columnName, String value) {
+        if (columnName == null || value == null) {
+            return value;
+        }
+        if ("FIRST".equals(columnName) || "LAST".equals(columnName)) {
+            return value.replaceAll("\\d+$", "");
+        }
+        return value;
     }
 }

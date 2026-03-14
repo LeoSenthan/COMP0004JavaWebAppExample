@@ -1,3 +1,12 @@
 .clearBoth {
   clear: both;
 }
+
+.home-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.home-link:hover {
+  text-decoration: underline;
+}

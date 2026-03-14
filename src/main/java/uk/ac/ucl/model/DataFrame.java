@@ -34,7 +34,6 @@ public class DataFrame {
         if (row < 0 || row >= this.getRowCount()) {
             throw new IndexOutOfBoundsException("Row index " + row + " is out of bounds");
         }
-
         for (Column col : this.columns){
             if (col.getName().equals(columnName)){
                 return col.getRowValue(row);
@@ -47,7 +46,6 @@ public class DataFrame {
         if (row < 0 || row >= this.getRowCount()) {
             throw new IndexOutOfBoundsException("Row index " + row + " is out of bounds");
         }
-
         for (Column col : this.columns){
             if (col.getName().equals(columnName)){
                 col.setRowValue(row, newValue);

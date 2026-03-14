@@ -1,5 +1,4 @@
 <%@ page import="uk.ac.ucl.model.DataFrame" %>
-<%@ page import="uk.ac.ucl.model.ModelFactory" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html>
@@ -28,19 +27,12 @@
 
   <%
     String errorMessage = (String) request.getAttribute("errorMessage");
+    DataFrame df = (DataFrame) request.getAttribute("dataframe");
+
     if (errorMessage != null) {
   %>
       <p style="color: red;"><%= errorMessage %></p>
   <%
-    }
-
-    DataFrame df = (DataFrame) request.getAttribute("dataframe");
-    if (df == null) {
-      try {
-        df = ModelFactory.getModel().getData();
-      } catch (Exception e) {
-        errorMessage = "Error loading data: " + e.getMessage();
-      }
     }
 
     if (df != null && df.getRowCount() > 0) {
@@ -67,7 +59,7 @@
   <%
     } else {
   %>
-      <p>No patient data available.</p>
+      <p>No patient records available.</p>
   <%
     }
   %>

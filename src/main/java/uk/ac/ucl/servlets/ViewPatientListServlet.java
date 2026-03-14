@@ -24,17 +24,13 @@ public class ViewPatientListServlet extends HttpServlet {
             Model model = ModelFactory.getModel();
             DataFrame df = model.getData();
             request.setAttribute("dataframe", df);
-
-            ServletContext context = getServletContext();
-            RequestDispatcher dispatch = context.getRequestDispatcher("/patientList.jsp");
-            dispatch.forward(request, response);
-
         } catch (Exception e) {
-            request.setAttribute("errorMessage", "Error loading data: " + e.getMessage());
-            ServletContext context = getServletContext();
-            RequestDispatcher dispatch = context.getRequestDispatcher("/error.jsp");
-            dispatch.forward(request, response);
+            request.setAttribute("errorMessage", "Unable to load patient data. Please try again later.");
         }
+
+        ServletContext context = getServletContext();
+        RequestDispatcher dispatch = context.getRequestDispatcher("/patientList.jsp");
+        dispatch.forward(request, response);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

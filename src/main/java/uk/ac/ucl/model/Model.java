@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Model {
 
-    private static Model instance = new Model();
+    private static Model instance;
     private DataFrame data;
 
     // Private constructor ensures singleton pattern
@@ -16,6 +16,12 @@ public class Model {
     }
 
     public static Model getInstance() {
+        if (instance == null) {
+            instance = new Model();
+        } else if (instance.data == null || instance.data.getRowCount() == 0) {
+            // Recover from a previous startup where data failed to load.
+            instance = new Model();
+        }
         return instance;
     }
 

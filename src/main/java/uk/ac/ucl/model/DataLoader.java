@@ -7,34 +7,27 @@ import java.io.InputStreamReader;
 
 public class DataLoader {
 
-    private String resourcePath; // path relative to resources folder
+    private String filename;
     private DataFrame database;
-    private String[] attributes;
 
-    public DataLoader(String resourcePath) {
-        // Example: "data/patients100.csv"
-        this.resourcePath = resourcePath;
+    public DataLoader(String filepath) {
+        this.filename = filepath;
     }
 
     public DataFrame load() {
+
         database = new DataFrame();
 
-        // Load CSV from classpath
-        try (InputStream is = getClass().getClassLoader().getResourceAsStream(resourcePath)) {
-
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream(filename)) {
             if (is == null) {
-                System.out.println("File not found in resources: " + resourcePath);
-                return database; // return empty DataFrame
+                throw new IOException("Resource not found: " + filename);
             }
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
             String header = reader.readLine();
-            if (header != null) {
-                createColumns(header);
-                System.out.println("Header line: " + header);
-            }
-
+            createColumns(header);
             String line;
+
             while ((line = reader.readLine()) != null) {
                 readLine(line);
             }
@@ -47,7 +40,7 @@ public class DataLoader {
     }
 
     private void createColumns(String columnNames) {
-        attributes = columnNames.split(",");
+        String[] attributes = columnNames.split(",");
         for (String field : attributes) {
             Column col = new Column(field);
             database.addColumn(col);
@@ -55,9 +48,9 @@ public class DataLoader {
     }
 
     private void readLine(String line) {
-        String[] vals = line.split(",", -1); // keeps empty values
+        String[] vals = line.split(",", -1);
         for (int i = 0; i < vals.length; i++) {
-            database.addValue(attributes[i], vals[i]);
+            database.addValue(database.getColumnNames().get(i), vals[i]);
         }
     }
 }

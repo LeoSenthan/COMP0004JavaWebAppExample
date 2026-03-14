@@ -1,4 +1,5 @@
 <%@ page import="uk.ac.ucl.model.DataFrame" %>
+<%@ page import="uk.ac.ucl.model.ModelFactory" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html>
@@ -34,7 +35,15 @@
     }
 
     DataFrame df = (DataFrame) request.getAttribute("dataframe");
-    if (df != null) {
+    if (df == null) {
+      try {
+        df = ModelFactory.getModel().getData();
+      } catch (Exception e) {
+        errorMessage = "Error loading data: " + e.getMessage();
+      }
+    }
+
+    if (df != null && df.getRowCount() > 0) {
       // Only show the important columns
       String[] columnsToShow = {"FIRST", "LAST", "CITY", "STATE", "BIRTHDATE"};
   %>

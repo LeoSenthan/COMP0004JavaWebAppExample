@@ -12,13 +12,22 @@
   <h1>Search Result</h1>
   <%
     String errorMessage = (String) request.getAttribute("errorMessage");
+    String searchString = (String) request.getAttribute("searchString");
     if (errorMessage != null)
     {
   %>
-      <p style="color: red;"><%= errorMessage %></p>
+      <p class="message message-error"><%= errorMessage %></p>
   <%
     }
     List<String> patients = (List<String>) request.getAttribute("result");
+    if (searchString == null) {
+      searchString = "";
+    }
+    if (!searchString.isEmpty()) {
+  %>
+    <p>Search term: <strong><%= searchString %></strong></p>
+  <%
+    }
     if (patients != null && patients.size() != 0)
     {
     %>
@@ -27,7 +36,7 @@
         for (String patient : patients)
         {
       %>
-      <li><%=patient%></li>
+      <li><%= patient %></li>
      <% }
     } else if (errorMessage == null)
     {%>

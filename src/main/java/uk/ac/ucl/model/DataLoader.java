@@ -8,16 +8,14 @@ import java.nio.charset.StandardCharsets;
 
 public class DataLoader {
 
-    private String filename;
-    private DataFrame database;
+    private final String filename;
 
     public DataLoader(String filepath) {
         this.filename = filepath;
     }
 
     public DataFrame load() {
-
-        database = new DataFrame();
+        DataFrame database = new DataFrame();
 
         try (InputStream is = getClass().getClassLoader().getResourceAsStream(filename)) {
             if (is == null) {
@@ -29,11 +27,11 @@ public class DataLoader {
             if (header == null || header.isBlank()) {
                 throw new IOException("CSV header is missing in resource: " + filename);
             }
-            createColumns(header);
+            createColumns(database, header);
             String line;
 
             while ((line = reader.readLine()) != null) {
-                readLine(line);
+                readLine(database, line);
             }
 
         } catch (IOException e) {
@@ -43,7 +41,7 @@ public class DataLoader {
         return database;
     }
 
-    private void createColumns(String columnNames) {
+    private void createColumns(DataFrame database, String columnNames) {
         String[] attributes = columnNames.split(",");
         for (String field : attributes) {
             Column col = new Column(field);
@@ -51,7 +49,7 @@ public class DataLoader {
         }
     }
 
-    private void readLine(String line) {
+    private void readLine(DataFrame database, String line) {
         String[] vals = line.split(",", -1);
         for (int i = 0; i < vals.length; i++) {
             String columnName = database.getColumnNames().get(i);

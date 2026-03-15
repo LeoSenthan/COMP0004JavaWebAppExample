@@ -1,12 +1,14 @@
 package uk.ac.ucl.model;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class Column {
-    private String name;
-    private ArrayList<String> rows;
+    private final String name;
+    private final List<String> rows;
     
-    public Column(String column_name){
-        this.name = column_name;
+    public Column(String columnName){
+        this.name = columnName;
         this.rows = new ArrayList<>();
     }
 
@@ -15,7 +17,7 @@ public class Column {
     }
 
     public int getSize(){
-        return rows.size();
+        return this.rows.size();
     }
 
     public String getRowValue(int index){
@@ -28,5 +30,9 @@ public class Column {
 
     public void addRowValue(String newValue){
         this.rows.add(newValue);
+    }
+
+    public void removeRowValue(int index) {
+        this.rows.remove(index);
     }
 }

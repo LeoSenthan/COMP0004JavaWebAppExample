@@ -56,3 +56,8 @@ SERVER_PORT=9090 mvn clean compile exec:exec
 
 - The entry point is `uk.ac.ucl.main.Main` in `src/main/java/uk/ac/ucl/main/Main.java`.
 - Packaging as a WAR is useful if you want to deploy to an external Tomcat later.
+
+## Coursework Notes
+
+- The project currently implements the core coursework requirements for `Column`, `DataFrame`, `DataLoader`, the `Model`, search, list view, and operations.
+- Cleanup changes have been applied to reduce inline CSS, improve servlet error handling, and keep more data preparation in the servlets rather than the JSPs.

@@ -1,25 +1,22 @@
-<%@ page import="uk.ac.ucl.model.DataFrame" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.Map" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%!
+  private String escapeHtml(String value) {
+    if (value == null) {
+      return "";
+    }
+    return value.replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace("\"", "&quot;");
+  }
+%>
 
 <html>
 <head>
   <jsp:include page="/meta.jsp"/>
   <title>Patient Data App</title>
-  <style>
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
-    th, td {
-      border: 1px solid #aaa;
-      padding: 8px;
-      text-align: left;
-    }
-    th {
-      background-color: #ddd;
-    }
-  </style>
 </head>
 <body>
 <jsp:include page="/header.jsp"/>
@@ -28,63 +25,82 @@
 
   <%
     String errorMessage = (String) request.getAttribute("errorMessage");
-    DataFrame df = (DataFrame) request.getAttribute("dataframe");
-    List<Integer> matchingRows = (List<Integer>) request.getAttribute("matchingRows");
-    String search = (String) request.getAttribute("search");
-    String searchEncoded = (String) request.getAttribute("searchEncoded");
+    String message = (String) request.getAttribute("message");
+    String searchQueryString = (String) request.getAttribute("searchQueryString");
     Integer selectedRow = (Integer) request.getAttribute("selectedRow");
+    List<Integer> matchingRows = (List<Integer>) request.getAttribute("matchingRows");
+    List<String> summaryColumns = (List<String>) request.getAttribute("summaryColumns");
+    List<Map<String, String>> patientRows = (List<Map<String, String>>) request.getAttribute("patientRows");
+    Map<String, String> selectedPatient = (Map<String, String>) request.getAttribute("selectedPatient");
+    Map<String, String> searchCriteria = (Map<String, String>) request.getAttribute("searchCriteria");
     Integer currentPage = (Integer) request.getAttribute("currentPage");
     Integer totalPages = (Integer) request.getAttribute("totalPages");
-    Integer startIndex = (Integer) request.getAttribute("startIndex");
-    Integer endIndex = (Integer) request.getAttribute("endIndex");
 
-    if (search == null) search = "";
-    if (searchEncoded == null) searchEncoded = "";
+    if (searchQueryString == null) searchQueryString = "";
     if (matchingRows == null) matchingRows = java.util.Collections.emptyList();
+    if (summaryColumns == null) summaryColumns = java.util.Collections.emptyList();
+    if (patientRows == null) patientRows = java.util.Collections.emptyList();
+    if (searchCriteria == null) searchCriteria = java.util.Collections.emptyMap();
     if (currentPage == null) currentPage = 1;
     if (totalPages == null) totalPages = 1;
-    if (startIndex == null) startIndex = 0;
-    if (endIndex == null) endIndex = matchingRows.size();
 
-    if (errorMessage != null) {
+    if (message != null) {
   %>
-      <p style="color: red;"><%= errorMessage %></p>
+      <p class="message message-success"><%= escapeHtml(message) %></p>
   <%
     }
 
-    String searchEscaped = search.replace("&", "&amp;").replace("<", "&lt;").replace("\"", "&quot;");
+    if (errorMessage != null) {
+  %>
+      <p class="message message-error"><%= escapeHtml(errorMessage) %></p>
+  <%
+    }
+
+    String preservedSearchParameters = searchQueryString.isEmpty() ? "" : "&" + searchQueryString;
   %>
 
-  <form method="get" action="patientList" style="margin-bottom: 10px;">
-    <label for="searchInput">Search keyword:</label>
-    <input id="searchInput" type="text" name="search" value="<%= searchEscaped %>" />
-    <input type="submit" value="Search" />
+  <form method="get" action="patientList" class="search-form">
+    <table class="data-table search-table">
+      <tr>
+        <% for (String col : summaryColumns) { %>
+          <th><%= col %></th>
+        <% } %>
+      </tr>
+      <tr>
+        <% for (String col : summaryColumns) {
+             String value = searchCriteria.get(col);
+             if (value == null) value = "";
+             String valueEscaped = escapeHtml(value);
+        %>
+          <td>
+            <input type="text" name="<%= col %>" value="<%= valueEscaped %>" placeholder="<%= col %>" />
+          </td>
+        <% } %>
+      </tr>
+    </table>
+    <div class="search-actions">
+      <input type="submit" value="Search" />
+      <a href="patientList">Clear</a>
+    </div>
   </form>
 
   <%
-    if (df != null && !matchingRows.isEmpty()) {
-      // Show 8 relevant summary fields in the list view.
-      String[] columnsToShow = {"ID", "FIRST", "LAST", "GENDER", "BIRTHDATE", "CITY", "STATE", "ZIP"};
+    if (!matchingRows.isEmpty()) {
   %>
 
-  <table>
+  <table class="data-table">
     <tr>
-      <% for (String col : columnsToShow) { %>
+      <% for (String col : summaryColumns) { %>
         <th><%= col %></th>
       <% } %>
     </tr>
 
-    <% for (int i = startIndex; i < endIndex; i++) { %>
-      <% int rowIndex = matchingRows.get(i); %>
+    <% for (Map<String, String> row : patientRows) { %>
+      <% String rowIndex = row.get("__rowIndex"); %>
       <tr>
-        <% for (int j = 0; j < columnsToShow.length; j++) { %>
-          <% String col = columnsToShow[j]; %>
+        <% for (String col : summaryColumns) { %>
           <td>
-            <% if ("FIRST".equals(col) || "LAST".equals(col)) { %>
-              <a href="patientList?page=<%= currentPage %>&search=<%= searchEncoded %>&selectedRow=<%= rowIndex %>#details"><%= df.getValue(col, rowIndex) %></a>
-            <% } else { %>
-              <%= df.getValue(col, rowIndex) %>
-            <% } %>
+            <a href="patientList?page=<%= currentPage %><%= preservedSearchParameters %>&selectedRow=<%= rowIndex %>#details"><%= escapeHtml(row.get(col)) %></a>
           </td>
         <% } %>
       </tr>
@@ -93,18 +109,26 @@
 
   <p>Showing <%= matchingRows.size() %> matching records.</p>
   <p>Page <%= currentPage %> of <%= totalPages %></p>
-  <div>
+  <div class="pagination-links">
     <% if (currentPage > 1) { %>
-      <a href="patientList?page=<%= currentPage - 1 %>&search=<%= searchEncoded %>">Previous</a>
+      <a href="patientList?page=<%= currentPage - 1 %><%= preservedSearchParameters %>">Previous</a>
     <% } %>
     <% if (currentPage < totalPages) { %>
       <% if (currentPage > 1) { %> | <% } %>
-      <a href="patientList?page=<%= currentPage + 1 %>&search=<%= searchEncoded %>">Next</a>
+      <a href="patientList?page=<%= currentPage + 1 %><%= preservedSearchParameters %>">Next</a>
     <% } %>
   </div>
 
-  <form method="get" action="patientList" style="margin-top: 10px;">
-    <input type="hidden" name="search" value="<%= searchEscaped %>" />
+  <form method="get" action="patientList" class="page-form">
+    <% for (String col : summaryColumns) {
+         String value = searchCriteria.get(col);
+         if (value == null) {
+           value = "";
+         }
+         String valueEscaped = escapeHtml(value);
+    %>
+      <input type="hidden" name="<%= col %>" value="<%= valueEscaped %>" />
+    <% } %>
     <label for="pageInput">Go to page:</label>
     <input id="pageInput" type="number" name="page" min="1" max="<%= totalPages %>" value="<%= currentPage %>" required />
     <input type="submit" value="Go" />
@@ -114,18 +138,49 @@
     if (selectedRow != null) {
   %>
   <h3 id="details">Patient Details</h3>
-  <table>
+  <table class="data-table">
     <tr>
       <th>Field</th>
       <th>Value</th>
     </tr>
-    <% for (String col : df.getColumnNames()) { %>
+    <% for (Map.Entry<String, String> entry : selectedPatient.entrySet()) { %>
       <tr>
-        <td><%= col %></td>
-        <td><%= df.getValue(col, selectedRow) %></td>
+        <td><%= escapeHtml(entry.getKey()) %></td>
+        <td><%= escapeHtml(entry.getValue()) %></td>
       </tr>
     <% } %>
   </table>
+
+  <h3>Edit Patient</h3>
+  <form method="post" action="updatePatient" class="patient-edit-form">
+    <input type="hidden" name="rowIndex" value="<%= selectedRow %>" />
+    <input type="hidden" name="page" value="<%= currentPage %>" />
+    <input type="hidden" name="returnQuery" value="<%= escapeHtml(searchQueryString) %>" />
+    <table class="data-table">
+      <tr>
+        <th>Field</th>
+        <th>Value</th>
+      </tr>
+      <% for (Map.Entry<String, String> entry : selectedPatient.entrySet()) { %>
+      <tr>
+        <td><%= escapeHtml(entry.getKey()) %></td>
+        <td>
+          <input class="patient-edit-input" type="text" name="<%= escapeHtml(entry.getKey()) %>" value="<%= escapeHtml(entry.getValue()) %>" />
+        </td>
+      </tr>
+      <% } %>
+    </table>
+    <div class="search-actions">
+      <input type="submit" value="Save Changes" />
+    </div>
+  </form>
+
+  <form method="post" action="deletePatient" class="delete-form">
+    <input type="hidden" name="rowIndex" value="<%= selectedRow %>" />
+    <input type="hidden" name="page" value="<%= currentPage %>" />
+    <input type="hidden" name="returnQuery" value="<%= escapeHtml(searchQueryString) %>" />
+    <input type="submit" value="Delete Patient" onclick="return confirm('Delete this patient?');" />
+  </form>
   <%
     }
   %>

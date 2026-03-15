@@ -1,8 +1,10 @@
 package uk.ac.ucl.model;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class DataFrame {
-    private ArrayList<Column> columns;
+    private final List<Column> columns;
 
     public DataFrame(){
         this.columns = new ArrayList<>();
@@ -15,8 +17,8 @@ public class DataFrame {
         this.columns.add(newColumn);
     }   
 
-    public ArrayList<String> getColumnNames(){
-        ArrayList<String> fields = new ArrayList<>();
+    public List<String> getColumnNames(){
+        List<String> fields = new ArrayList<>();
         for (Column col : this.columns){
             fields.add(col.getName());
         }
@@ -63,5 +65,25 @@ public class DataFrame {
             }
         }
         throw new IllegalArgumentException("Column '" + columnName + "' not found");
+    }
+
+    public void addRow(List<String> values) {
+        if (values == null || values.size() != this.columns.size()) {
+            throw new IllegalArgumentException("Row must contain exactly " + this.columns.size() + " values");
+        }
+
+        for (int i = 0; i < this.columns.size(); i++) {
+            this.columns.get(i).addRowValue(values.get(i));
+        }
+    }
+
+    public void removeRow(int row) {
+        if (row < 0 || row >= this.getRowCount()) {
+            throw new IndexOutOfBoundsException("Row index " + row + " is out of bounds");
+        }
+
+        for (Column col : this.columns) {
+            col.removeRowValue(row);
+        }
     }
 }

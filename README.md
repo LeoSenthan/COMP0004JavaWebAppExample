@@ -1,63 +1,31 @@
-# WebAppExample
+# COMP0004 Coursework 2026
 
-A minimal Java web application intended for junior developers learning the basics of Java web apps, servlets, and JSPs. The app runs an embedded Tomcat server and serves static resources from `src/main/webapp`.
+## Project Overview
+This project is a Java web application built with Maven, embedded Tomcat, Servlets, JSP, HTML and CSS.
+Patient data is loaded from CSV into a DataFrame model and exposed through an MVC design.
 
-## Prerequisites
+## Requirement Coverage
+- Requirement 1: Implemented `Column` with column name and row storage, including `getName`, `getSize`, `getRowValue`, `setRowValue`, and `addRowValue`.
+- Requirement 2: Implemented `DataFrame` with `addColumn`, `getColumnNames`, `getRowCount`, `getValue`, `putValue`, and `addValue`.
+- Requirement 3: Implemented `DataLoader` to read CSV from resources and populate a `DataFrame`.
+- Requirement 4: Implemented singleton `Model` that manages loading, searching, analytics, persistence, and export.
+- Requirement 5: Implemented servlets and JSP pages for patient list, patient details, add/edit/delete flow, search, analytics, and error handling.
+- Requirement 6: Implemented search logic in the `Model` 
+- Requirement 7: Implemented analytics including oldest/youngest patient, place-based counts, race/ethnicity distribution, and gender/state summaries.
+- Requirement 8: Implemented add, edit, and delete patient rows with CSV write-back.
+- Requirement 9: Implemented `JSONWriter` and a Save to JSON option in the web app.
+- Requirement 10: Implemented an age distribution chart on the Analytics page.
 
-- Java 25 (as configured in `pom.xml`)
-- Maven 3.9+
+## Key Features
+- Patient list pagination with click-through to full patient details.
+- All summary columns in the list can open the selected patient details view.
+- Add page supports full patient record entry across all 20 columns.
+- Edit and delete actions are available from the selected patient details section.
+- Data can be saved to CSV and exported to JSON.
+- Analytics page includes tabular summaries and a visual age-band bar chart.
 
-## Project Structure
+## Run Notes
 
-- `src/main/java` — Java source code (including the embedded Tomcat bootstrap in `uk.ac.ucl.main.Main`)
-- `src/main/webapp` — Static web resources and JSPs
-- `target` — Build output (created by Maven)
-- `war-file` — Packaged WAR output (created by Maven)
-
-## Compile
-
-Build the project and produce a WAR file:
-
-```bash
-mvn clean package
-```
-
-This writes the WAR to `war-file/`.
-
-## Run (Embedded Tomcat)
-
-First compile the project, then run the main class via Maven:
-
-```bash
-mvn clean compile exec:exec
-```
-
-By default the server starts on port `8080`. Open:
-
-```
-http://localhost:8080
-```
-
-## Configuration
-
-You can configure the server using system properties or environment variables:
-
-- `SERVER_PORT` — Port to bind (default: `8080`)
-- `WEBAPP_DIR` — Web resources directory (default: `src/main/webapp/`)
-- `CLASSES_DIR` — Compiled classes directory (default: `target/classes`)
-
-Example (using environment variables):
-
-```bash
-SERVER_PORT=9090 mvn clean compile exec:exec
-```
-
-## Notes for Learners
-
-- The entry point is `uk.ac.ucl.main.Main` in `src/main/java/uk/ac/ucl/main/Main.java`.
-- Packaging as a WAR is useful if you want to deploy to an external Tomcat later.
-
-## Coursework Notes
-
-- The project currently implements the core coursework requirements for `Column`, `DataFrame`, `DataLoader`, the `Model`, search, list view, and operations.
-- Cleanup changes have been applied to reduce inline CSS, improve servlet error handling, and keep more data preparation in the servlets rather than the JSPs.
+- Build: `mvn compile`
+- Run: `mvn clean compile exec:exec`
+- Default URL: `http://localhost:8080/`

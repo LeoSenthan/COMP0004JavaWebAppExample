@@ -1,6 +1,7 @@
 package uk.ac.ucl.model;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -92,6 +93,45 @@ public class Model {
 
     public Map<String, Integer> getRaceDistribution() {
         return getDistributionByColumn("RACE");
+    }
+
+    public Map<String, Integer> getAgeBandDistribution() {
+        Map<String, Integer> ageBands = new LinkedHashMap<>();
+        ageBands.put("0-17", 0);
+        ageBands.put("18-29", 0);
+        ageBands.put("30-44", 0);
+        ageBands.put("45-59", 0);
+        ageBands.put("60-74", 0);
+        ageBands.put("75+", 0);
+        ageBands.put("Unknown", 0);
+
+        LocalDate today = LocalDate.now();
+        for (int row = 0; row < this.data.getRowCount(); row++) {
+            LocalDate birthdate = parseBirthdate(row);
+            if (birthdate == null || birthdate.isAfter(today)) {
+                ageBands.put("Unknown", ageBands.get("Unknown") + 1);
+                continue;
+            }
+
+            int age = Period.between(birthdate, today).getYears();
+            String bucket;
+            if (age <= 17) {
+                bucket = "0-17";
+            } else if (age <= 29) {
+                bucket = "18-29";
+            } else if (age <= 44) {
+                bucket = "30-44";
+            } else if (age <= 59) {
+                bucket = "45-59";
+            } else if (age <= 74) {
+                bucket = "60-74";
+            } else {
+                bucket = "75+";
+            }
+            ageBands.put(bucket, ageBands.get(bucket) + 1);
+        }
+
+        return ageBands;
     }
 
     public Map<String, Integer> getDistributionByColumn(String columnName) {

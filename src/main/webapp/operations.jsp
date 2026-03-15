@@ -16,12 +16,12 @@
 <html>
 <head>
   <jsp:include page="/meta.jsp"/>
-  <title>Patient Operations</title>
+  <title>Patient Analytics</title>
 </head>
 <body>
 <jsp:include page="/header.jsp"/>
 <div class="main">
-  <h2>Requirement 7 Operations</h2>
+  <h2>Analytics</h2>
 
   <%
     String message = (String) request.getAttribute("message");
@@ -40,6 +40,8 @@
     Map<String, Integer> raceCounts = (Map<String, Integer>) request.getAttribute("raceCounts");
     Map<String, Integer> topStates = (Map<String, Integer>) request.getAttribute("topStates");
     Map<String, Integer> genderDistribution = (Map<String, Integer>) request.getAttribute("genderDistribution");
+    Map<String, Integer> ageBandDistribution = (Map<String, Integer>) request.getAttribute("ageBandDistribution");
+    Integer maxAgeBandCount = (Integer) request.getAttribute("maxAgeBandCount");
 
     if (message != null) {
   %>
@@ -90,7 +92,7 @@
 
   <h3>Field Count Lookup</h3>
   <p>Select a field and enter a value to count how many patients match.</p>
-  <form method="post" action="operations" class="ops-lookup-form">
+  <form method="post" action="analytics" class="ops-lookup-form">
     <label>Field:
       <select name="lookupField">
         <option value="CITY"<%= "CITY".equals(lookupField) ? " selected" : "" %>>City</option>
@@ -138,6 +140,29 @@
       }
     %>
   </table>
+
+  <h3>Age Distribution Chart</h3>
+  <p>Bar chart generated with plain HTML and CSS (no external chart libraries).</p>
+  <div class="simple-chart">
+    <%
+      if (ageBandDistribution != null && !ageBandDistribution.isEmpty()) {
+        int maxBarValue = (maxAgeBandCount == null || maxAgeBandCount <= 0) ? 1 : maxAgeBandCount;
+        for (Map.Entry<String, Integer> entry : ageBandDistribution.entrySet()) {
+          int count = entry.getValue() == null ? 0 : entry.getValue();
+          int percentage = (int) Math.round((count * 100.0) / maxBarValue);
+    %>
+      <div class="simple-chart-row">
+        <span class="simple-chart-label"><%= escapeHtml(entry.getKey()) %></span>
+        <div class="simple-chart-track">
+          <div class="simple-chart-bar" style="width: <%= percentage %>%;"></div>
+        </div>
+        <span class="simple-chart-value"><%= count %></span>
+      </div>
+    <%
+        }
+      }
+    %>
+  </div>
 
   <h3>Top 5 States by Patient Count</h3>
   <table class="data-table">

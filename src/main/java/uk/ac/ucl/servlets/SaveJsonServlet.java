@@ -19,10 +19,10 @@ public class SaveJsonServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             String savedPath = Model.getInstance().exportDataAsJson();
-            response.sendRedirect("operations?message="
+            response.sendRedirect("analytics?message="
                 + URLEncoder.encode("JSON saved to " + savedPath, StandardCharsets.UTF_8));
         } catch (RuntimeException e) {
-            response.sendRedirect("operations?errorMessage="
+            response.sendRedirect("analytics?errorMessage="
                 + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8));
         }
     }

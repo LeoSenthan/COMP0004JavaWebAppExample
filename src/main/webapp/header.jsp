@@ -3,7 +3,7 @@
   <p class="top-links">
     <a href="patientList">View Patients</a>
     <a href="add">Add</a>
-    <a href="operations">Operations</a>
+    <a href="analytics">Analytics</a>
   </p>
   <div class="clearBoth"></div>
 </div>

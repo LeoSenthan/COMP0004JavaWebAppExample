@@ -114,6 +114,41 @@
   cursor: pointer;
 }
 
+.simple-chart {
+  margin: 10px 0 18px;
+}
+
+.simple-chart-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0;
+}
+
+.simple-chart-label {
+  width: 70px;
+  font-weight: 600;
+}
+
+.simple-chart-track {
+  flex: 1;
+  height: 16px;
+  background: #efefef;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.simple-chart-bar {
+  height: 100%;
+  background: #4c7dd9;
+}
+
+.simple-chart-value {
+  width: 64px;
+  text-align: right;
+}
+
 .patient-edit-form,
 .delete-form {
   margin: 16px 0;

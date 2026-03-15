@@ -13,7 +13,7 @@ import uk.ac.ucl.model.Model;
 import java.io.IOException;
 import java.util.Map;
 
-@WebServlet("/operations")
+@WebServlet("/analytics")
 public class OperationsServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -71,6 +71,13 @@ public class OperationsServlet extends HttpServlet {
             Map<String, Integer> raceCounts = model.getRaceDistribution();
             Map<String, Integer> topStates = model.getTopDistributionByColumn("STATE", 5);
             Map<String, Integer> genderDistribution = model.getTopDistributionByColumn("GENDER", 10);
+            Map<String, Integer> ageBandDistribution = model.getAgeBandDistribution();
+            int maxAgeBandCount = 0;
+            for (Integer count : ageBandDistribution.values()) {
+                if (count != null && count > maxAgeBandCount) {
+                    maxAgeBandCount = count;
+                }
+            }
 
             request.setAttribute("totalPatients", totalPatients);
             request.setAttribute("oldestName", oldestName);
@@ -86,9 +93,11 @@ public class OperationsServlet extends HttpServlet {
             request.setAttribute("raceCounts", raceCounts);
             request.setAttribute("topStates", topStates);
             request.setAttribute("genderDistribution", genderDistribution);
+            request.setAttribute("ageBandDistribution", ageBandDistribution);
+            request.setAttribute("maxAgeBandCount", maxAgeBandCount);
 
         } catch (Exception e) {
-            request.setAttribute("errorMessage", "Unable to compute operations: " + e.getMessage());
+            request.setAttribute("errorMessage", "Unable to compute analytics: " + e.getMessage());
         }
 
         ServletContext context = getServletContext();

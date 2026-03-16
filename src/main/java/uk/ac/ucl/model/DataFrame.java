@@ -67,22 +67,21 @@ public class DataFrame {
         throw new IllegalArgumentException("Column '" + columnName + "' not found");
     }
 
-    public void addRow(List<String> values) {
-        if (values == null || values.size() != this.columns.size()) {
+    public void addRow(List<String> values){
+        if (values == null || values.size() != this.columns.size()){
             throw new IllegalArgumentException("Row must contain exactly " + this.columns.size() + " values");
         }
-
-        for (int i = 0; i < this.columns.size(); i++) {
+        for (int i = 0; i < this.columns.size(); i++){
             this.columns.get(i).addRowValue(values.get(i));
         }
     }
 
-    public void removeRow(int row) {
-        if (row < 0 || row >= this.getRowCount()) {
+    public void removeRow(int row){
+        if (row < 0 || row >= this.getRowCount()){
             throw new IndexOutOfBoundsException("Row index " + row + " is out of bounds");
         }
 
-        for (Column col : this.columns) {
+        for (Column col : this.columns){
             col.removeRowValue(row);
         }
     }

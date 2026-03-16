@@ -1,5 +1,4 @@
 package uk.ac.ucl.model;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +11,7 @@ public class Column {
         this.rows = new ArrayList<>();
     }
 
-    public String getName() {
+    public String getName(){
         return this.name;
     }
 
@@ -32,7 +31,7 @@ public class Column {
         this.rows.add(newValue);
     }
 
-    public void removeRowValue(int index) {
+    public void removeRowValue(int index){
         this.rows.remove(index);
     }
 }

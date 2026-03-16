@@ -19,12 +19,12 @@ import java.util.List;
 import java.util.Map;
 
 @WebServlet("/patientList")
-public class ViewPatientListServlet extends HttpServlet {
+public class ViewPatientListServlet extends HttpServlet{
 
     private static final int PAGE_SIZE = 50;
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
+            throws IOException, ServletException{
 
         Model model = Model.getInstance();
         List<String> summaryColumns = model.getSummaryColumns();
@@ -34,9 +34,9 @@ public class ViewPatientListServlet extends HttpServlet {
         setSearchStateAttributes(request, summaryColumns, searchCriteria, searchQueryString);
         setFeedbackAttributes(request);
 
-        try {
+        try{
             populatePatientListAttributes(request, model, summaryColumns, searchCriteria);
-        } catch (Exception e) {
+        } catch (Exception e){
             request.setAttribute("errorMessage", "Search failed: " + e.getMessage());
         }
 
@@ -50,20 +50,20 @@ public class ViewPatientListServlet extends HttpServlet {
         List<String> summaryColumns,
         Map<String, String> searchCriteria,
         String searchQueryString
-    ) {
+    ){
         request.setAttribute("summaryColumns", summaryColumns);
         request.setAttribute("searchCriteria", searchCriteria);
         request.setAttribute("searchQueryString", searchQueryString);
     }
 
-    private void setFeedbackAttributes(HttpServletRequest request) {
+    private void setFeedbackAttributes(HttpServletRequest request){
         String message = request.getParameter("message");
-        if (message != null && !message.isBlank()) {
+        if (message != null && !message.isBlank()){
             request.setAttribute("message", message);
         }
 
         String errorMessage = request.getParameter("errorMessage");
-        if (errorMessage != null && !errorMessage.isBlank()) {
+        if (errorMessage != null && !errorMessage.isBlank()){
             request.setAttribute("errorMessage", errorMessage);
         }
     }
@@ -73,12 +73,12 @@ public class ViewPatientListServlet extends HttpServlet {
         Model model,
         List<String> summaryColumns,
         Map<String, String> searchCriteria
-    ) {
+    ){
         List<Integer> matchingRows = model.searchRowIndexes(searchCriteria);
         request.setAttribute("matchingRows", matchingRows);
 
         Integer selectedRow = parseSelectedRow(request.getParameter("selectedRow"), model.getData().getRowCount());
-        if (selectedRow != null && matchingRows.contains(selectedRow)) {
+        if (selectedRow != null && matchingRows.contains(selectedRow)){
             request.setAttribute("selectedRow", selectedRow);
             request.setAttribute("selectedPatient", model.getRowValues(selectedRow));
         }
@@ -94,22 +94,22 @@ public class ViewPatientListServlet extends HttpServlet {
         request.setAttribute("totalPages", totalPages);
     }
 
-    private Map<String, String> getSearchCriteria(HttpServletRequest request, List<String> summaryColumns) {
+    private Map<String, String> getSearchCriteria(HttpServletRequest request, List<String> summaryColumns){
         Map<String, String> searchCriteria = new LinkedHashMap<>();
-        for (String columnName : summaryColumns) {
+        for (String columnName : summaryColumns){
             String value = request.getParameter(columnName);
-            if (value != null) {
+            if (value != null){
                 searchCriteria.put(columnName, value.trim());
             }
         }
         return searchCriteria;
     }
 
-    private String buildSearchQueryString(Map<String, String> searchCriteria, List<String> summaryColumns) {
+    private String buildSearchQueryString(Map<String, String> searchCriteria, List<String> summaryColumns){
         List<String> queryParts = new ArrayList<>();
-        for (String columnName : summaryColumns) {
+        for (String columnName : summaryColumns){
             String value = searchCriteria.get(columnName);
-            if (value == null || value.isBlank()) {
+            if (value == null || value.isBlank()){
                 continue;
             }
 
@@ -128,9 +128,9 @@ public class ViewPatientListServlet extends HttpServlet {
         List<String> summaryColumns,
         int startIndex,
         int endIndex
-    ) {
+    ){
         List<Map<String, String>> rows = new ArrayList<>();
-        for (int i = startIndex; i < endIndex; i++) {
+        for (int i = startIndex; i < endIndex; i++){
             int rowIndex = matchingRows.get(i);
             Map<String, String> rowValues = new LinkedHashMap<>(model.getRowValues(rowIndex, summaryColumns));
             rowValues.put("__rowIndex", Integer.toString(rowIndex));
@@ -139,44 +139,44 @@ public class ViewPatientListServlet extends HttpServlet {
         return rows;
     }
 
-    private int parsePage(String rawPage, int totalPages) {
+    private int parsePage(String rawPage, int totalPages){
         int page = 1;
 
-        if (rawPage != null) {
-            try {
+        if (rawPage != null){
+            try{
                 page = Integer.parseInt(rawPage);
-            } catch (NumberFormatException ignored) {
+            } catch (NumberFormatException ignored){
                 page = 1;
             }
         }
 
-        if (page < 1) {
+        if (page < 1){
             return 1;
         }
-        if (page > totalPages) {
+        if (page > totalPages){
             return totalPages;
         }
         return page;
     }
 
-    private Integer parseSelectedRow(String rawRow, int totalRows) {
-        if (rawRow == null) {
+    private Integer parseSelectedRow(String rawRow, int totalRows){
+        if (rawRow == null){
             return null;
         }
 
-        try {
+        try{
             int row = Integer.parseInt(rawRow);
-            if (row < 0 || row >= totalRows) {
+            if (row < 0 || row >= totalRows){
                 return null;
             }
             return row;
-        } catch (NumberFormatException ignored) {
+        } catch (NumberFormatException ignored){
             return null;
         }
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException{
         doGet(request, response);
     }
 }

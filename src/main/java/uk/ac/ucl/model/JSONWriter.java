@@ -6,32 +6,32 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-public class JSONWriter {
+public class JSONWriter{
 
-    public void write(DataFrame dataFrame, Path outputPath) {
-        try {
-            if (outputPath.getParent() != null) {
+    public void write(DataFrame dataFrame, Path outputPath){
+        try{
+            if (outputPath.getParent() != null){
                 Files.createDirectories(outputPath.getParent());
             }
             Files.writeString(outputPath, buildJson(dataFrame), StandardCharsets.UTF_8);
-        } catch (IOException e) {
+        } catch (IOException e){
             throw new IllegalStateException("Failed to write JSON file to '" + outputPath + "'", e);
         }
     }
 
-    private String buildJson(DataFrame dataFrame) {
+    private String buildJson(DataFrame dataFrame){
         List<String> columnNames = dataFrame.getColumnNames();
         StringBuilder json = new StringBuilder();
         json.append("[\n");
 
-        for (int row = 0; row < dataFrame.getRowCount(); row++) {
+        for (int row = 0; row < dataFrame.getRowCount(); row++){
             json.append("  {");
 
-            for (int column = 0; column < columnNames.size(); column++) {
+            for (int column = 0; column < columnNames.size(); column++){
                 String columnName = columnNames.get(column);
                 String value = dataFrame.getValue(columnName, row);
 
-                if (column > 0) {
+                if (column > 0){
                     json.append(", ");
                 }
 
@@ -45,7 +45,7 @@ public class JSONWriter {
             }
 
             json.append("}");
-            if (row < dataFrame.getRowCount() - 1) {
+            if (row < dataFrame.getRowCount() - 1){
                 json.append(',');
             }
             json.append("\n");
@@ -55,11 +55,10 @@ public class JSONWriter {
         return json.toString();
     }
 
-    private String escapeJson(String value) {
-        if (value == null) {
+    private String escapeJson(String value){
+        if (value == null){
             return "";
         }
-
         return value
             .replace("\\", "\\\\")
             .replace("\"", "\\\"")

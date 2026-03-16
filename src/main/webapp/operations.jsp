@@ -142,7 +142,6 @@
   </table>
 
   <h3>Age Distribution Chart</h3>
-  <p>Bar chart generated with plain HTML and CSS (no external chart libraries).</p>
   <div class="simple-chart">
     <%
       if (ageBandDistribution != null && !ageBandDistribution.isEmpty()) {

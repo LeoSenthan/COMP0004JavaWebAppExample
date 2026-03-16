@@ -15,31 +15,31 @@ import java.util.Collections;
 import java.util.List;
 
 @WebServlet("/runsearch")
-public class SearchServlet extends HttpServlet {
+public class SearchServlet extends HttpServlet{
 
-  protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+  protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
     doPost(request, response);
   }
 
-  protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+  protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
     String searchString = request.getParameter("searchstring");
 
-    try {
+    try{
       Model model = Model.getInstance();
       String trimmedSearch = searchString == null ? "" : searchString.trim();
 
       request.setAttribute("searchString", trimmedSearch);
 
-      if (trimmedSearch.isEmpty()) {
+      if (trimmedSearch.isEmpty()){
         request.setAttribute("errorMessage", "Please enter a search term.");
         request.setAttribute("result", Collections.emptyList());
-      } else {
+      } else{
         List<String> searchResult = model.searchFor(trimmedSearch);
         request.setAttribute("result", searchResult);
       }
 
       forward(request, response, "/searchResult.jsp");
-    } catch (RuntimeException e) {
+    } catch (RuntimeException e){
       response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
       request.setAttribute("errorTitle", "Search unavailable");
       request.setAttribute("errorMessage", "Unable to load patient data. Please try again later.");
@@ -48,7 +48,7 @@ public class SearchServlet extends HttpServlet {
   }
 
   private void forward(HttpServletRequest request, HttpServletResponse response, String path)
-      throws ServletException, IOException {
+      throws ServletException, IOException{
     ServletContext context = getServletContext();
     RequestDispatcher dispatch = context.getRequestDispatcher(path);
     dispatch.forward(request, response);

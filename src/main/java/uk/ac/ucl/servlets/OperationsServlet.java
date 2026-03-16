@@ -14,20 +14,20 @@ import java.io.IOException;
 import java.util.Map;
 
 @WebServlet("/analytics")
-public class OperationsServlet extends HttpServlet {
+public class OperationsServlet extends HttpServlet{
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException{
 
-        try {
+        try{
             Model model = Model.getInstance();
             String message = request.getParameter("message");
             String errorMessage = request.getParameter("errorMessage");
 
-            if (message != null && !message.isBlank()) {
+            if (message != null && !message.isBlank()){
                 request.setAttribute("message", message);
             }
-            if (errorMessage != null && !errorMessage.isBlank()) {
+            if (errorMessage != null && !errorMessage.isBlank()){
                 request.setAttribute("errorMessage", errorMessage);
             }
 
@@ -40,7 +40,7 @@ public class OperationsServlet extends HttpServlet {
             String oldestBirthdate = "N/A";
             String oldestCity = "N/A";
             int sameCityCount = 0;
-            if (oldestRow >= 0) {
+            if (oldestRow >= 0){
                 oldestName = model.getPatientDisplayName(oldestRow);
                 oldestBirthdate = model.getData().getValue("BIRTHDATE", oldestRow);
                 oldestCity = model.getData().getValue("CITY", oldestRow);
@@ -52,7 +52,7 @@ public class OperationsServlet extends HttpServlet {
             String youngestName = "N/A";
             String youngestBirthdate = "N/A";
             String youngestCity = "N/A";
-            if (youngestRow >= 0) {
+            if (youngestRow >= 0){
                 youngestName = model.getPatientDisplayName(youngestRow);
                 youngestBirthdate = model.getData().getValue("BIRTHDATE", youngestRow);
                 youngestCity = model.getData().getValue("CITY", youngestRow);
@@ -63,7 +63,7 @@ public class OperationsServlet extends HttpServlet {
             String lookupValue = request.getParameter("lookupValue");
             Integer lookupCount = null;
             if (lookupField != null && !lookupField.isBlank()
-                    && lookupValue != null && !lookupValue.isBlank()) {
+                    && lookupValue != null && !lookupValue.isBlank()){
                 lookupCount = model.countPatientsByFieldValue(lookupField, lookupValue);
             }
 
@@ -73,8 +73,8 @@ public class OperationsServlet extends HttpServlet {
             Map<String, Integer> genderDistribution = model.getTopDistributionByColumn("GENDER", 10);
             Map<String, Integer> ageBandDistribution = model.getAgeBandDistribution();
             int maxAgeBandCount = 0;
-            for (Integer count : ageBandDistribution.values()) {
-                if (count != null && count > maxAgeBandCount) {
+            for (Integer count : ageBandDistribution.values()){
+                if (count != null && count > maxAgeBandCount){
                     maxAgeBandCount = count;
                 }
             }
@@ -96,7 +96,7 @@ public class OperationsServlet extends HttpServlet {
             request.setAttribute("ageBandDistribution", ageBandDistribution);
             request.setAttribute("maxAgeBandCount", maxAgeBandCount);
 
-        } catch (Exception e) {
+        } catch (Exception e){
             request.setAttribute("errorMessage", "Unable to compute analytics: " + e.getMessage());
         }
 
@@ -106,7 +106,7 @@ public class OperationsServlet extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException{
         doGet(request, response);
     }
 }

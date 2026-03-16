@@ -16,34 +16,34 @@ import java.util.List;
 import java.util.Map;
 
 @WebServlet("/updatePatient")
-public class UpdatePatientServlet extends HttpServlet {
+public class UpdatePatientServlet extends HttpServlet{
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException{
         Model model = Model.getInstance();
         List<String> allColumns = model.getAllColumns();
         int rowIndex = Integer.parseInt(request.getParameter("rowIndex"));
         Map<String, String> patientValues = new LinkedHashMap<>();
 
-        for (String columnName : allColumns) {
+        for (String columnName : allColumns){
             String value = request.getParameter(columnName);
             patientValues.put(columnName, value == null ? "" : value);
         }
 
-        try {
+        try{
             model.updatePatient(rowIndex, patientValues);
             response.sendRedirect(buildRedirectUrl(request, rowIndex, "Patient updated", false));
-        } catch (RuntimeException e) {
+        } catch (RuntimeException e){
             response.sendRedirect(buildRedirectUrl(request, rowIndex, e.getMessage(), true));
         }
     }
 
-    private String buildRedirectUrl(HttpServletRequest request, int rowIndex, String message, boolean error) {
+    private String buildRedirectUrl(HttpServletRequest request, int rowIndex, String message, boolean error){
         StringBuilder url = new StringBuilder("patientList?selectedRow=").append(rowIndex);
         appendOptionalQuery(url, request.getParameter("page"), "page");
 
         String returnQuery = request.getParameter("returnQuery");
-        if (returnQuery != null && !returnQuery.isBlank()) {
+        if (returnQuery != null && !returnQuery.isBlank()){
             url.append('&').append(returnQuery);
         }
 
@@ -56,8 +56,8 @@ public class UpdatePatientServlet extends HttpServlet {
         return url.append("#details").toString();
     }
 
-    private void appendOptionalQuery(StringBuilder url, String value, String paramName) {
-        if (value != null && !value.isBlank()) {
+    private void appendOptionalQuery(StringBuilder url, String value, String paramName){
+        if (value != null && !value.isBlank()){
             url.append('&')
                 .append(paramName)
                 .append('=')
